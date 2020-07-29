@@ -1,4 +1,3 @@
-import { Client } from "../Client.ts";
 import { User } from "./User.ts";
 import { Guild } from "./Guild.ts";
 
@@ -12,8 +11,8 @@ export class GuildMember {
 	public deaf: boolean;
 	public mute: boolean;
 
-	constructor(data: any, public guild: Guild, protected client: Client) {
-		this.user = new User(data.user, client);
+	constructor(data: any, public guild: Guild) {
+		this.user = new User(data.user);
 		this.nick = data.nick || null;
 		this.roles = data.roles;
 		this.joinedAt = data.joinedAt;

@@ -1,4 +1,3 @@
-import { Client } from "../Client.ts";
 import { UserFlag } from "../util/UserFlags.ts";
 
 /** Class representing a user */
@@ -10,7 +9,7 @@ export class User {
 	public public_flags: UserFlag;
 	public flags: UserFlag;
 
-	constructor(data: any, protected client: Client) {
+	constructor(data: any) {
 		this.id = data.id;
 		this.public_flags = new UserFlag(data.public_flags || 0);
 		this.flags = new UserFlag(data.flags || 0);
