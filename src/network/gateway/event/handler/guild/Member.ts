@@ -3,6 +3,7 @@ import { Guild } from "../../../../../structures/Guild.ts";
 import { User } from "../../../../../structures/user.ts";
 import { GuildMember } from "../../../../../structures/GuildMember.ts";
 import { Emitter } from "../../../../../util/Emitter.ts";
+import { GuildDB } from "../../../Event.ts";
 
 export interface MemberEventSubscriber {
   guildMemberAdd: Emitter<{ guild: Guild; member: GuildMember }>;
@@ -10,11 +11,6 @@ export interface MemberEventSubscriber {
     { guild: Guild; member: GuildMember; oldMember: GuildMember }
   >;
   guildMemberRemove: Emitter<{ guild: Guild; member: GuildMember }>;
-}
-
-export interface GuildDB {
-  getGuild(guildID: string): Guild | undefined;
-  setGuild(guildID: string, guild: Guild): void;
 }
 
 export function handleMemberEvent(
