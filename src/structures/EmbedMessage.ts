@@ -95,7 +95,7 @@ export class EmbedMessageBuilder {
     return new EmbedMessageBuilder({ ...this.obj, fields: [...fields] });
   }
 
-  raw(): EmbedMessage {
+  build(): EmbedMessage {
     return { ...this.obj };
   }
 }
