@@ -8,6 +8,7 @@ import { Message } from "./structures/Message.ts"
 import { User } from "./structures/User.ts"
 import { Role } from "./structures/Role.ts"
 import { Invite } from "./structures/Invite.ts"
+import { EmbedMessage } from "./structures/EmbedMessage.ts"
 
 import * as events from "./Events.ts";
 import { RequestHandler } from "./network/rest/RequestHandler.ts"
@@ -446,13 +447,13 @@ export namespace Options {
 		content?: string,
 		tts?: boolean,
 		file?: {name: string, file: File | Blob},
-		embed?: any
+		embed?: EmbedMessage,
 	}
 
 	export interface modifyMessage {
 		content?: string,
 		// TODO: file
-		embed?: any
+		embed?: EmbedMessage,
 	}
 
 	export interface modifyGuild {
