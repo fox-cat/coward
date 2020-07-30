@@ -18,6 +18,7 @@ export { Role } 					from "./src/structures/Role.ts"
 export { User } 					from "./src/structures/User.ts"
 export { ReactionStandardEmoji }	from "./src/structures/ReactionStandardEmoji.ts"
 export { ReactionCustomEmoji }		from "./src/structures/ReactionCustomEmoji.ts"
+export { PermissionOverwrite }      from "./src/structures/PermissionOverwrite.ts";
 
 export { Intents } from "./src/util/Constants.ts"
 export { Emitter } from "./src/util/Emitter.ts"

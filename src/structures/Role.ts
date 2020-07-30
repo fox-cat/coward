@@ -11,6 +11,7 @@ export class Role {
 	public managed: boolean
 	public mentionable: boolean
 	public permissions: Permission
+	public position: number;
 
 	constructor(data: any, public guild: Guild, protected client: Client) {
 		this.permissions = new Permission(data.permissions)
@@ -20,6 +21,7 @@ export class Role {
 		this.hoist = data.hoist
 		this.managed = data.managed
 		this.mentionable = data.mentionable
+		this.position = data.position;
 	}
 
 	delete() {

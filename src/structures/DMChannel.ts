@@ -1,6 +1,7 @@
 import { Client } from "../Client.ts"
 import { User } from "./User.ts"
 import { TextChannel } from "./TextChannel.ts"
+
 /**
  * Class representing a DM channel
  * @extends Channel

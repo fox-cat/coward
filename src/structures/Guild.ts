@@ -41,12 +41,6 @@ export class Guild {
 			}
 		}
 
-		if(data.members) {
-			for(const mem of data.members) {
-				this.members.set(mem.user.id, new GuildMember(mem, this))
-			}
-		}
-
 		if(data.emojis) {
 			for(const e of data.emojis) {
 				this.emojis.set(e.id, new GuildEmoji(e, this, client))
@@ -56,6 +50,12 @@ export class Guild {
 		if(data.roles) {
 			for(const role of data.roles) {
 				this.roles.set(role.id, new Role(role, this, client))
+			}
+		}
+
+		if(data.members) {
+			for(const mem of data.members) {
+				this.members.set(mem.user.id, new GuildMember(mem, this))
 			}
 		}
 	}

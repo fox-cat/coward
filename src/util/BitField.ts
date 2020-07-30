@@ -3,8 +3,10 @@ export type BitFieldResolvable = string | BitField | number | BitFieldResolvable
 /** Base class for places where the discord API uses bitfields  */
 export class BitField {
 	flags: Map<string, number>
+	bitfield: number;
 
-	constructor(public bitfield: BitFieldResolvable) {
+	constructor(bitfield: BitFieldResolvable) {
+		this.bitfield = this.resolve(bitfield);
 		this.flags = new Map<string, number>()
 	}
 
@@ -20,6 +22,16 @@ export class BitField {
 		if(Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, 0)
 		if(typeof bit === "string" && this.flags.get(bit)) return this.flags.get(bit)!
 		throw new RangeError("INVALID_BIT")
+	}
+
+	add(...bits: BitFieldResolvable[]) {
+		let newBits = 0;
+		
+		for(const bit of bits) {
+			newBits |= this.resolve(bit);
+		}
+
+		this.bitfield |= newBits;
 	}
 
 	toArray() {

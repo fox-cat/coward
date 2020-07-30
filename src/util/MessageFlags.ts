@@ -20,4 +20,8 @@ export class MessageFlag extends BitField {
 	has(flag: MessageFlagResolvable) {
 		return super.has(flag)
 	}
+	
+	add(...bits: MessageFlagResolvable[]) {
+		super.add(bits);
+	}
 }

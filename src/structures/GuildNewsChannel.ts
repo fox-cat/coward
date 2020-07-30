@@ -4,6 +4,9 @@ import { TextChannel } from "./TextChannel.ts"
 import { applyMixins } from "../util/Mixins.ts"
 import { Channel } from "./Channel.ts"
 
+/** Used for intellisense */
+export interface GuildNewsChannel extends GuildChannel, TextChannel {}
+
 /**
  * Class representing a news channel in a guild
  * @extends GuildChannel

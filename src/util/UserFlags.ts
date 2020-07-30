@@ -27,4 +27,8 @@ export class UserFlag extends BitField {
 	has(flag: UserFlagResolvable) {
 		return super.has(flag)
 	}
+	
+	add(...bits: UserFlagResolvable[]) {
+		super.add(bits);
+	}
 }

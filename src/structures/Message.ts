@@ -4,6 +4,7 @@ import { GuildTextChannel } from "./GuildTextChannel.ts"
 import { DMChannel } from "./DMChannel.ts"
 import { GuildNewsChannel } from "./GuildNewsChannel.ts"
 import  {MessageFlag } from "../util/MessageFlags.ts";
+import { GuildMember } from "./GuildMember.ts";
 
 /** Class representing a message */
 export class Message {
@@ -11,6 +12,7 @@ export class Message {
 	public content: string;
 	public channel: GuildTextChannel | DMChannel | GuildNewsChannel;
 	public author: User;
+	public member?: GuildMember;
 	public timestamp: string;
 	public flags: MessageFlag;
 
@@ -18,13 +20,15 @@ export class Message {
 		this.id = data.id;
 		this.content = data.content;
 		this.flags = new MessageFlag(data.flags);
-		var channel: any;
-		var guildID: any = client.channelGuildIDs.get(data.channel_id);
-		var guild: any = client.guilds.get(guildID);
-		if(guild != undefined) { channel = guild.channels.get(data.channel_id); }
-		else { channel = client.dmChannels.get(data.channel_id); }
-		this.channel = channel;
 		this.author = new User(data.author);
+		
+		let guildID = client.channelGuildIDs.get(data.channel_id)!;
+		let guild = client.guilds.get(guildID);
+		
+		this.channel = guild != undefined ? guild.channels.get(data.channel_id) : client.dmChannels.get(data.channel_id);
+		
+		if(guild) this.member = guild.members.get(this.author.id);
+		
 		this.timestamp = data.timestamp;
 	}
 }

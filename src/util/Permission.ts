@@ -51,4 +51,8 @@ export class Permission extends BitField {
 	has(permission: PermissionResolvable, checkAdmin: boolean = true) {
 		return (checkAdmin && super.has("ADMINISTRATOR") || super.has(permission))
 	}
+
+	add(...bits: PermissionResolvable[]) {
+		super.add(bits);
+	}
 }
