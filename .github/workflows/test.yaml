@@ -24,4 +24,5 @@ jobs:
     - name: Run deno test
       run: |
         deno --version
+        deno cache deps.ts
         deno test
