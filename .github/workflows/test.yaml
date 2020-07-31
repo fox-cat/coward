@@ -22,6 +22,6 @@ jobs:
       run: |
         deno --version
         deno cache deps.ts
-        deno test --allow-read --allow-net
+        deno test --allow-read --allow-net --allow-env
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
