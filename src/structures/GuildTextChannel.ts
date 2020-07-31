@@ -1,14 +1,13 @@
 import { Client } from "../Client.ts";
 import { Message } from "./Message.ts";
 import { GuildChannel } from "./GuildChannel.ts";
-import { TextChannel } from "./TextChannel.ts";
-import { applyMixins } from "../util/Mixins.ts";
+import { TextChannelMixIn } from "./TextChannel.ts";
 
 /**
  * Class representing a text channel in a guild
  * @extends GuildChannel
  */
-export class GuildTextChannel extends GuildChannel {
+export class GuildTextChannel extends TextChannelMixIn(GuildChannel) {
   public rateLimitPerUser: number;
   public topic: string;
 
@@ -23,6 +22,3 @@ export class GuildTextChannel extends GuildChannel {
     this.topic = data.topic || null;
   }
 }
-
-export interface GuildTextChannel extends GuildChannel, TextChannel {}
-applyMixins(GuildTextChannel, [TextChannel]);
