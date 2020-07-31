@@ -115,43 +115,29 @@ export class Client {
   // database implementation ends
 
   /** Post a channel in a guild. Requires the `MANAGE_CHANNELS` permission. */
-  createChannel(
+  async createChannel(
     guildID: string,
     options: Options.createChannel,
   ): Promise<Channel> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "POST",
-        Endpoints.GUILD_CHANNELS(guildID),
-        options,
-      )
-        .then((data: any) => {
-          resolve(Channel.from(data, this));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    const data = await this.requestHandler.request(
+      "POST",
+      Endpoints.GUILD_CHANNELS(guildID),
+      options,
+    );
+    return Channel.from(data, this);
   }
 
   /** Modify a channel. Requires the `MANAGE_CHANNELS` permission in the guild. */
-  modifyChannel(
+  async modifyChannel(
     channelID: string,
     options: Options.modifyChannel,
   ): Promise<Channel> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "PATCH",
-        Endpoints.CHANNEL(channelID),
-        options,
-      )
-        .then((data: any) => {
-          resolve(Channel.from(data, this));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    const data = await this.requestHandler.request(
+      "PATCH",
+      Endpoints.CHANNEL(channelID),
+      options,
+    );
+    return Channel.from(data, this);
   }
 
   /** Delete a channel. Requires the `MANAGE_CHANNELS` permission in the guild. */
@@ -160,50 +146,36 @@ export class Client {
   }
 
   /** Get a DM channel of a user - if there is none, create one. */
-  getDMChannel(userID: string): Promise<DMChannel> {
-    return new Promise(async (resolve, reject) => {
-      let dmChannelID = this.dmChannelUsers.get(userID);
-      if (dmChannelID !== undefined) {
-        resolve(this.dmChannels.get(dmChannelID));
-      } else {
-        this.requestHandler.request(
-          "POST",
-          Endpoints.USER_CHANNELS("@me"),
-          { recipients: [userID], type: 1 },
-        )
-          .then((data: any) => {
-            resolve(new DMChannel(data, this));
-          })
-          .catch((err: any) => {
-            reject(err);
-          });
-      }
-    });
+  async getDMChannel(userID: string): Promise<DMChannel> {
+    const dmChannelID = this.dmChannelUsers.get(userID);
+    if (dmChannelID != null) {
+      const dmChannel = this.dmChannels.get(dmChannelID);
+      if (dmChannel != null) return dmChannel;
+    }
+    const data = await this.requestHandler.request(
+      "POST",
+      Endpoints.USER_CHANNELS("@me"),
+      { recipients: [userID], type: 1 },
+    );
+    return new DMChannel(data, this);
   }
 
   /** Post a message in a channel. Requires the `SEND_MESSAGES` permission.*/
-  createMessage(
+  async createMessage(
     channelID: string,
     content: string | Options.createMessage,
   ): Promise<Message> {
     if (typeof content === "string") content = { content: content };
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "POST",
-        Endpoints.CHANNEL_MESSAGES(channelID),
-        content,
-      )
-        .then((data: any) => {
-          resolve(new Message(data, this));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    const data = await this.requestHandler.request(
+      "POST",
+      Endpoints.CHANNEL_MESSAGES(channelID),
+      content,
+    );
+    return new Message(data, this);
   }
 
   /** Modify a message. Must be authored by you. */
-  modifyMessage(
+  async modifyMessage(
     /** Channel the message is in */
     channelID: string,
     /** Message to modify */
@@ -211,19 +183,12 @@ export class Client {
     content: string | Options.modifyMessage,
   ): Promise<Message> {
     if (typeof content === "string") content = { content: content };
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "PATCH",
-        Endpoints.CHANNEL_MESSAGE(channelID, messageID),
-        content,
-      )
-        .then((data: any) => {
-          resolve(new Message(data, this));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    const data = await this.requestHandler.request(
+      "PATCH",
+      Endpoints.CHANNEL_MESSAGE(channelID, messageID),
+      content,
+    );
+    return new Message(data, this);
   }
 
   /** Delete a message in a channel. Requires the `MANAGE_MESSAGES` permission. */
@@ -317,32 +282,28 @@ export class Client {
 
   // TODO: putChannelPermissions ?
 
-  createChannelInvite(
+  async createChannelInvite(
     channelID: string,
     inviteOptions?: { max_age?: number; max_uses?: number },
   ): Promise<Invite> {
-    return this.requestHandler.request(
+    const data = await this.requestHandler.request(
       "POST",
       Endpoints.CHANNEL_INVITES(channelID),
       inviteOptions,
-    ) as Promise<Invite>;
+    );
+    return new Invite(data, this);
   }
 
   /** Get invites in a guild channel. Returns an array of Invite objects. Requires `MANAGE_CHANNELS` permission. */
-  getChannelInvites(channelID: string): Promise<Array<Invite>> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request("GET", Endpoints.CHANNEL_INVITES(channelID))
-        .then((data: any) => {
-          const arrayInvites: Array<Invite> = [];
-          data.forEach((invite: any) => {
-            arrayInvites.push(new Invite(invite, this));
-          });
-          resolve(arrayInvites);
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+  async getChannelInvites(channelID: string): Promise<Array<Invite>> {
+    const data = await this.requestHandler.request(
+      "GET",
+      Endpoints.CHANNEL_INVITES(channelID),
+    );
+
+    return Object.values(data as object).map((invite: any) =>
+      new Invite(invite, this)
+    );
   }
 
   /**
@@ -385,16 +346,16 @@ export class Client {
   // TODO: Emoji (https://discord.com/developers/docs/resources/emoji)
 
   /** Modify a guild. Requires the `MANAGE_GUILD` permission. */
-  modifyGuild(guildID: string, options: Options.modifyGuild): Promise<Guild> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request("PATCH", Endpoints.GUILD(guildID), options)
-        .then((data: any) => {
-          resolve(new Guild(data, this));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+  async modifyGuild(
+    guildID: string,
+    options: Options.modifyGuild,
+  ): Promise<Guild> {
+    const data = await this.requestHandler.request(
+      "PATCH",
+      Endpoints.GUILD(guildID),
+      options,
+    );
+    return new Guild(data, this);
   }
 
   /** Delete a guild permanently. Must be the owner. */
@@ -403,30 +364,22 @@ export class Client {
   }
 
   /** Modify the attributes of a guild member. */
-  modifyMember(
+  async modifyMember(
     guildID: string,
     userID: string,
     options: Options.modifyMember,
   ): Promise<GuildMember> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "PATCH",
-        Endpoints.GUILD_MEMBER(guildID, userID),
-        options,
-      )
-        .then((data: any) => {
-          const guild = this.guilds.get(guildID);
-          if (!guild) reject();
-          else {
-            const member = new GuildMember(data, guild);
-            guild.members.set(member.user.id, member);
-            resolve(member);
-          }
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    const data = await this.requestHandler.request(
+      "PATCH",
+      Endpoints.GUILD_MEMBER(guildID, userID),
+      options,
+    );
+    const guild = this.guilds.get(guildID);
+    if (!guild) throw new Error("unknown guild");
+
+    const member = new GuildMember(data, guild);
+    guild.members.set(member.user.id, member);
+    return member;
   }
 
   /** Put a role on a member in a guild. Requires `MANAGE_ROLES` permission. */
@@ -501,55 +454,42 @@ export class Client {
   }
 
   /** Create a role in a guild. Requires `MANAGE_ROLES` permission. */
-  createRole(guildID: string, options: Options.createRole): Promise<Role> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "POST",
-        Endpoints.GUILD_ROLES(guildID),
-        options,
-      )
-        .then((data: any) => {
-          const guild = this.guilds.get(guildID);
-          if (!guild) reject();
-          else {
-            const role = new Role(data, guild, this);
-            guild.roles.set(role.id, role);
-            resolve(role);
-          }
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+  async createRole(
+    guildID: string,
+    options: Options.createRole,
+  ): Promise<Role> {
+    const data = await this.requestHandler.request(
+      "POST",
+      Endpoints.GUILD_ROLES(guildID),
+      options,
+    );
+    const guild = this.guilds.get(guildID);
+    if (!guild) throw new Error("unknown guild");
+
+    const role = new Role(data, guild, this);
+    guild.roles.set(role.id, role);
+    return role;
   }
 
   // TODO: modify role positions https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
 
   /** Modify a role in a guild. Requires `MANAGE_ROLES` permission. */
-  modifyRole(
+  async modifyRole(
     guildID: string,
     roleID: string,
     options: Options.modifyRole,
   ): Promise<Role> {
-    return new Promise(async (resolve, reject) => {
-      this.requestHandler.request(
-        "PATCH",
-        Endpoints.GUILD_ROLE(guildID, roleID),
-        options,
-      )
-        .then((data: any) => {
-          const guild = this.guilds.get(guildID);
-          if (!guild) reject();
-          else {
-            const role = new Role(data, guild, this);
-            guild.roles.set(role.id, role);
-            resolve(role);
-          }
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    const data = await this.requestHandler.request(
+      "PATCH",
+      Endpoints.GUILD_ROLE(guildID, roleID),
+      options,
+    );
+    const guild = this.guilds.get(guildID);
+    if (!guild) throw new Error("unknown guild");
+
+    const role = new Role(data, guild, this);
+    guild.roles.set(role.id, role);
+    return role;
   }
 
   /** Delete a role in a guild. Requires `MANAGE_ROLES` permission. */
