@@ -10,18 +10,23 @@ export class RequestHandler {
 
   constructor(private readonly botToken: string) {}
 
+  private getOrAddBucket(route: string): Bucket {
+    const bucket = this.rateLimitBuckets.get(route);
+    if (bucket != null) {
+      return bucket;
+    }
+    const newBucket = new Bucket();
+    this.rateLimitBuckets.set(route, newBucket);
+    return newBucket;
+  }
+
   private addQueue(
     func: Function,
     method: string,
     url: string,
   ): Promise<unknown> {
     const route = routify(method, url);
-    let bucket = this.rateLimitBuckets.get(route);
-    if (!bucket) {
-      bucket = new Bucket();
-      this.rateLimitBuckets.set(route, bucket);
-    }
-    return bucket.addQueue(func);
+    return this.getOrAddBucket(route).addQueue(func);
   }
 
   public request(

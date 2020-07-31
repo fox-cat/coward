@@ -22,8 +22,8 @@ export class Message {
     this.flags = new MessageFlag(data.flags);
     this.author = new User(data.author);
 
-    let guildID = client.channelGuildIDs.get(data.channel_id)!;
-    let guild = client.guilds.get(guildID);
+    const guildID = client.channelGuildIDs.get(data.channel_id)!;
+    const guild = client.guilds.get(guildID);
 
     this.channel = guild != undefined
       ? guild.channels.get(data.channel_id)

@@ -33,22 +33,13 @@ export class BitField {
   }
 
   add(...bits: BitFieldResolvable[]) {
-    let newBits = 0;
-
-    for (const bit of bits) {
-      newBits |= this.resolve(bit);
-    }
-
-    this.bitfield |= newBits;
+    this.bitfield |= bits.reduce(
+      (prev: number, bit) => prev | this.resolve(bit),
+      0,
+    );
   }
 
   toArray() {
-    let bits = [];
-
-    for (let flag of this.flags) {
-      if (this.has(flag[0])) bits.push(flag[0]);
-    }
-
-    return bits;
+    return [...this.flags.keys()].filter(this.has);
   }
 }

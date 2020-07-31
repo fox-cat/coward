@@ -13,10 +13,8 @@ export class DMChannel extends TextChannelMixIn(Channel) {
   constructor(data: any, client: Client) {
     super(data, client);
 
-    let arr: Array<any> = [];
-    for (let i in data.recipients) {
-      arr[<any> i] = new User(data.recipients[i]);
-    }
-    this.recipients = arr;
+    this.recipients = Object.values(data.recipients).map((recipient) =>
+      new User(recipient)
+    );
   }
 }

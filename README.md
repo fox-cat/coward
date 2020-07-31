@@ -21,7 +21,7 @@ Please don't use this in anything important yet. It is barely functional, and as
 ```typescript
 import { Client } from "https://deno.land/x/coward@v0.3.2/mod.ts";
 
-let client = new Client("TOKEN");
+const client = new Client("TOKEN");
 
 client.events.ready.on(() => {console.log("READY!")});
 

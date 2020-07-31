@@ -25,8 +25,8 @@ export class GuildChannel extends Channel {
     this._guildID = client.channelGuildIDs.get(this.id);
 
     this.permission_overwrites = new Map<string, PermissionOverwrite>();
-    for (let permission_overwrite of data.permission_overwrites) {
-      let perms = new PermissionOverwrite(permission_overwrite, client);
+    for (const permission_overwrite of data.permission_overwrites) {
+      const perms = new PermissionOverwrite(permission_overwrite, client);
       this.permission_overwrites.set(perms.id, perms);
     }
   }

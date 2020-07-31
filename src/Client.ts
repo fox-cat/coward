@@ -43,15 +43,9 @@ export class Client {
     public options: Options.clientConstructor = {},
   ) {
     if (this.options.intents !== undefined) {
-      let bitmask = 0;
-      if (this.options.intents instanceof Array) {
-        for (const intent of this.options.intents) {
-          bitmask |= intent;
-        }
-      } else {
-        bitmask = this.options.intents;
-      }
-      this.options.intents = bitmask;
+      this.options.intents = (Array.isArray(this.options.intents))
+        ? this.options.intents.reduce((prev, intent) => prev | intent, 0)
+        : this.options.intents;
     }
 
     this.gateway = new Gateway(

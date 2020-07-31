@@ -21,7 +21,7 @@ export class GuildMember {
     this.permissions = new Permission(0);
 
     this.roles = new Map<string, Role>();
-    for (let roleID of data.roles) {
+    for (const roleID of data.roles) {
       const role = guild.roles.get(roleID);
 
       if (!role) continue;
