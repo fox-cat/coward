@@ -5,10 +5,15 @@ const { DISCORD_TOKEN } = config();
 
 Deno.test("Connects to discord and emits ready event", async () => {
 	const bot = new Client(DISCORD_TOKEN);
-		
-	bot.events.ready.on(async () => {
-		await bot.disconnect();
-	});
+	
+	const disconnectTask = new Promise((resolve) =>
+		bot.events.ready.on(async () => {
+			await bot.disconnect();
+			resolve();
+		})
+	);
 	
 	bot.connect();
+	
+	await disconnectTask;
 });

@@ -61,12 +61,12 @@ export class Client {
 
 	/** Connect to the Discord API */
 	connect() {
-		this.connectionTask = this.gateway.connect()
+		this.connectionTask = this.gateway.connect();
 	}
 
 	/** Disconnect to the Discord API */
 	async disconnect() {
-		this.gateway.close();
+		await this.gateway.close();
 		await this.connectionTask;
 	}
 

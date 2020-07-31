@@ -73,11 +73,11 @@ export default class Gateway {
 		for await (const msg of this.sock) {
 			if (isWebSocketCloseEvent(msg)) {
 				fear("error", "websocket was closed");
-				this.onCloseEvent(msg);
+				await this.onCloseEvent(msg);
 				continue;
 			}
 			if (typeof msg === "string") {
-				this.handleWSMessage(JSON.parse(msg));
+				await this.handleWSMessage(JSON.parse(msg));
 			}
 		}
 	}
@@ -134,19 +134,19 @@ export default class Gateway {
 
 	async close() {
 		await this.heart.close();
-		if (!this.sock.isClosed) this.sock.close(1000);
+		if (!this.sock.isClosed) await this.sock.close(1000);
 	}
 
-	private onCloseEvent(message: { readonly code: CloseEventCode }) {
+	private async onCloseEvent(message: { readonly code: CloseEventCode }): Promise<void> {
 		this.status = "disconnected";
 		this.close();
 		console.log(message.code);
 		if (!message.code) return;
 
-		const event = newCloseEvent(message.code, () => {
+		const event = newCloseEvent(message.code, async () => {
 			this.status = "reconnecting";
-			this.connect();
+			await this.connect();
 		});
-		event.handle();
+		await event.handle();
 	}
 }

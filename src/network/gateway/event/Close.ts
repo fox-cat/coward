@@ -18,12 +18,12 @@ export enum CloseEventCode {
 }
 
 export interface CloseEvent {
-	handle(): void;
+	handle(): Promise<void>;
 }
 
 export function newCloseEvent(
 	code: CloseEventCode,
-	reconnectHandler: () => void,
+	reconnectHandler: () => Promise<void>,
 ): CloseEvent {
 	switch (code) {
 		case CloseEventCode.UNKNOWN_ERROR:
@@ -36,10 +36,10 @@ export function newCloseEvent(
 }
 
 class ReconnectEvent implements CloseEvent {
-	constructor(private reconnectHandler: () => void) {}
+	constructor(private reconnectHandler: () => Promise<void>) {}
 
-	handle() {
-		this.reconnectHandler();
+	handle(): Promise<void> {
+		return this.reconnectHandler();
 	}
 }
 
@@ -73,7 +73,7 @@ const fearMessages = {
 class FearEvent implements CloseEvent {
 	constructor(private readonly code: CloseEventCode) {}
 
-	handle() {
+	async handle() {
 		fear("error", fearMessages[this.code]);
 	}
 }
