@@ -7,7 +7,7 @@ import {
   MessageEventSubscriber,
 } from "./handler/Message.ts";
 import { GuildDB, ChannelDB } from "../Event.ts";
-import { GuildClient } from "../../../structures/Guild.ts";
+import { GuildClient, GuildHandler } from "../../../structures/Guild.ts";
 import { MessageClient } from "../../../structures/Message.ts";
 
 export interface EventSubscriber
@@ -17,6 +17,7 @@ export interface EventSubscriber
 
 export function handleEvent(
   client: GuildClient & MessageClient,
+  handler: GuildHandler,
   message: Payload,
   subscriber: EventSubscriber,
   database: GuildDB & ChannelDB,
@@ -30,12 +31,14 @@ export function handleEvent(
       subscriber,
       database,
       client,
+      handler,
     );
     return;
   }
   if (type.startsWith("GUILD_")) {
     handleGuildEvent(
       client,
+      handler,
       message,
       subscriber,
       database,

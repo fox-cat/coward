@@ -1,4 +1,4 @@
-import { GuildChannel } from "./GuildChannel.ts";
+import { GuildChannel, GuildChannelClient } from "./GuildChannel.ts";
 import { GuildTextChannel } from "./GuildTextChannel.ts";
 import { GuildVoiceChannel } from "./GuildVoiceChannel.ts";
 import { GuildChannelCategory } from "./GuildChannelCategory.ts";
@@ -9,11 +9,9 @@ import { GuildEmoji } from "./GuildEmoji.ts";
 import { Role } from "./Role.ts";
 import {
   GuildChannelAssociation,
-  Roles,
-  Messages,
   Guilds,
-  Channels,
 } from "./Delegates.ts";
+import { Roles, Messages, Channels } from "./Handlers.ts";
 
 type GuildChannelTypes =
   | GuildTextChannel
@@ -25,6 +23,9 @@ type GuildChannelTypes =
 export type GuildClient =
   & Guilds
   & GuildChannelAssociation
+  & GuildChannelClient;
+
+export type GuildHandler =
   & Roles
   & Messages
   & Channels;
@@ -48,7 +49,7 @@ export class Guild {
   /** A map of guild roles */
   public roles: Map<string, Role> = new Map<string, Role>();
 
-  constructor(data: any, client: GuildClient) {
+  constructor(data: any, client: GuildClient, handler: GuildHandler) {
     this.id = data.id;
     this.name = data.name;
     this.ownerID = data.ownerID;
@@ -57,19 +58,19 @@ export class Guild {
     if (data.channels) {
       for (const chan of data.channels) {
         client.setGuildId(chan.id, this.id);
-        this.channels.set(chan.id, GuildChannel.from(chan, client));
+        this.channels.set(chan.id, GuildChannel.from(chan, client, handler));
       }
     }
 
     if (data.emojis) {
       for (const e of data.emojis) {
-        this.emojis.set(e.id, new GuildEmoji(e, this, client));
+        this.emojis.set(e.id, new GuildEmoji(e, this, handler));
       }
     }
 
     if (data.roles) {
       for (const role of data.roles) {
-        this.roles.set(role.id, new Role(role, this, client));
+        this.roles.set(role.id, new Role(role, this, handler));
       }
     }
 

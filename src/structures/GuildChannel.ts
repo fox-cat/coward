@@ -3,17 +3,16 @@ import { Channel } from "./Channel.ts";
 import { Guild } from "./Guild.ts";
 import { PermissionOverwrite } from "./PermissionOverwrite.ts";
 import {
-  Channels,
   GuildChannelAssociation,
   Guilds,
-  Messages,
 } from "./Delegates.ts";
+import { Messages, Channels } from "./Handlers.ts";
 
 export type GuildChannelClient =
   & Guilds
-  & GuildChannelAssociation
-  & Channels
-  & Messages;
+  & GuildChannelAssociation;
+
+export type GuildChannelHandler = Messages & Channels;
 
 /**
  * Class representing a channel in a guild
@@ -30,8 +29,9 @@ export class GuildChannel extends Channel {
   constructor(
     data: any,
     private readonly client: GuildChannelClient,
+    private readonly handler: GuildChannelHandler,
   ) {
-    super(data, client);
+    super(data, handler);
 
     this.name = data.name;
     this.position = data.position;
@@ -51,10 +51,10 @@ export class GuildChannel extends Channel {
   }
 
   delete() {
-    return this.client.deleteChannel(this.id);
+    return this.handler.deleteChannel(this.id);
   }
 
   modify(options: Options.modifyChannel) {
-    return this.client.modifyChannel(this.id, options);
+    return this.handler.modifyChannel(this.id, options);
   }
 }

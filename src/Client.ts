@@ -1,14 +1,16 @@
 import { Endpoints } from "./util/Constants.ts";
 
 import { Channel } from "./structures/Channel.ts";
-import { Guild, GuildClient } from "./structures/Guild.ts";
+import { Guild } from "./structures/Guild.ts";
 import { GuildMember } from "./structures/GuildMember.ts";
 import { DMChannel } from "./structures/DMChannel.ts";
-import { Message, MessageClient } from "./structures/Message.ts";
+import { Message } from "./structures/Message.ts";
 import { User } from "./structures/User.ts";
 import { Role } from "./structures/Role.ts";
 import { Invite } from "./structures/Invite.ts";
 import { EmbedMessage } from "./structures/EmbedMessage.ts";
+import { Database } from "./util/Database.ts";
+import { Messages, Roles } from "./structures/Handlers.ts";
 
 import * as events from "./Events.ts";
 import { RequestHandler } from "./network/rest/RequestHandler.ts";
@@ -27,15 +29,12 @@ import Gateway from "./network/gateway/WebsocketHandler.ts";
  *
  *            client.connect()
  */
-export class Client implements GuildClient, MessageClient {
+export class Client implements Messages, Roles {
   private requestHandler: RequestHandler;
+  private readonly database = new Database();
 
   public gateway: Gateway;
-  public guilds: Map<string, Guild> = new Map<string, Guild>();
   public users: Map<string, User> = new Map<string, User>();
-  public dmChannels: Map<string, DMChannel> = new Map<string, DMChannel>();
-  public dmChannelUsers: Map<string, string> = new Map<string, string>();
-  public channelGuildIDs: Map<string, string> = new Map<string, string>();
 
   /** Create a Client */
   public constructor(
@@ -52,8 +51,9 @@ export class Client implements GuildClient, MessageClient {
       {
         token,
         intents: this.options.intents,
-        client: this,
-        database: this,
+        client: this.database,
+        database: this.database,
+        handler: this,
         subscriber: this.events,
       },
     );
@@ -81,45 +81,6 @@ export class Client implements GuildClient, MessageClient {
     return this.gateway.modifyPresence(options);
   }
 
-  // database implementation starts
-  // TODO: Split these implementation to another class
-  getGuild(guildID: string): Guild | undefined {
-    return this.guilds.get(guildID);
-  }
-
-  setGuild(guildID: string, guild: Guild) {
-    this.guilds.set(guildID, guild);
-  }
-
-  getGuildId(channelID: string): string | undefined {
-    return this.channelGuildIDs.get(channelID);
-  }
-
-  setGuildId(channelID: string, guildID: string) {
-    this.channelGuildIDs.set(channelID, guildID);
-  }
-
-  getDMChannel(id: string): DMChannel | undefined {
-    return this.dmChannels.get(id);
-  }
-
-  setDMChannel(id: string, channel: DMChannel) {
-    this.dmChannels.set(id, channel);
-  }
-
-  deleteDMChannel(id: string) {
-    this.dmChannelUsers.delete(id);
-  }
-
-  setDMChannelUsersRelation(userId: string, channelId: string) {
-    this.dmChannelUsers.set(userId, channelId);
-  }
-
-  deleteDMChannelUsersRelations(userId: string) {
-    this.dmChannelUsers.delete(userId);
-  }
-  // database implementation ends
-
   /** Post a channel in a guild. Requires the `MANAGE_CHANNELS` permission. */
   async createChannel(
     guildID: string,
@@ -130,7 +91,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.GUILD_CHANNELS(guildID),
       options,
     );
-    return Channel.from(data, this);
+    return Channel.from(data, this.database, this);
   }
 
   /** Modify a channel. Requires the `MANAGE_CHANNELS` permission in the guild. */
@@ -143,7 +104,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.CHANNEL(channelID),
       options,
     );
-    return Channel.from(data, this);
+    return Channel.from(data, this.database, this);
   }
 
   /** Delete a channel. Requires the `MANAGE_CHANNELS` permission in the guild. */
@@ -153,9 +114,9 @@ export class Client implements GuildClient, MessageClient {
 
   /** Get a DM channel of a user - if there is none, create one. */
   async fetchDMChannel(userID: string): Promise<DMChannel> {
-    const dmChannelID = this.dmChannelUsers.get(userID);
+    const dmChannelID = this.database.getDMChannelUsersRelation(userID);
     if (dmChannelID != null) {
-      const dmChannel = this.getDMChannel(dmChannelID);
+      const dmChannel = this.database.getDMChannel(dmChannelID);
       if (dmChannel != null) return dmChannel;
     }
     const data = await this.requestHandler.request(
@@ -177,7 +138,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.CHANNEL_MESSAGES(channelID),
       content,
     );
-    return new Message(data, this);
+    return new Message(data, this.database);
   }
 
   /** Modify a message. Must be authored by you. */
@@ -194,7 +155,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.CHANNEL_MESSAGE(channelID, messageID),
       content,
     );
-    return new Message(data, this);
+    return new Message(data, this.database);
   }
 
   /** Delete a message in a channel. Requires the `MANAGE_MESSAGES` permission. */
@@ -297,7 +258,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.CHANNEL_INVITES(channelID),
       inviteOptions,
     );
-    return new Invite(data, this);
+    return new Invite(data, this.database, this);
   }
 
   /** Get invites in a guild channel. Returns an array of Invite objects. Requires `MANAGE_CHANNELS` permission. */
@@ -308,7 +269,7 @@ export class Client implements GuildClient, MessageClient {
     );
 
     return Object.values(data as object).map((invite: any) =>
-      new Invite(invite, this)
+      new Invite(invite, this.database, this)
     );
   }
 
@@ -361,7 +322,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.GUILD(guildID),
       options,
     );
-    return new Guild(data, this);
+    return new Guild(data, this.database, this);
   }
 
   /** Delete a guild permanently. Must be the owner. */
@@ -380,7 +341,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.GUILD_MEMBER(guildID, userID),
       options,
     );
-    const guild = this.getGuild(guildID);
+    const guild = this.database.getGuild(guildID);
     if (!guild) throw new Error("unknown guild");
 
     const member = new GuildMember(data, guild);
@@ -469,7 +430,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.GUILD_ROLES(guildID),
       options,
     );
-    const guild = this.getGuild(guildID);
+    const guild = this.database.getGuild(guildID);
     if (!guild) throw new Error("unknown guild");
 
     const role = new Role(data, guild, this);
@@ -490,7 +451,7 @@ export class Client implements GuildClient, MessageClient {
       Endpoints.GUILD_ROLE(guildID, roleID),
       options,
     );
-    const guild = this.getGuild(guildID);
+    const guild = this.database.getGuild(guildID);
     if (!guild) throw new Error("unknown guild");
 
     const role = new Role(data, guild, this);

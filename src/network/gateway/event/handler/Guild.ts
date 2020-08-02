@@ -2,7 +2,11 @@ import { RoleEventSubscriber, handleRoleEvent } from "./guild/Role.ts";
 import { MemberEventSubscriber, handleMemberEvent } from "./guild/Member.ts";
 import { GuildDB } from "../../Event.ts";
 import { Payload } from "../../Payload.ts";
-import { Guild, GuildClient } from "../../../../structures/Guild.ts";
+import {
+  Guild,
+  GuildClient,
+  GuildHandler,
+} from "../../../../structures/Guild.ts";
 import { User } from "../../../../structures/User.ts";
 import { Emitter } from "../../../../util/Emitter.ts";
 import { GuildEmoji } from "../../../../structures/GuildEmoji.ts";
@@ -25,6 +29,7 @@ export interface GuildEventSubscriber
 
 export function handleGuildEvent(
   client: GuildClient,
+  handler: GuildHandler,
   message: Payload,
   subscriber: GuildEventSubscriber,
   database: GuildDB,
@@ -34,19 +39,19 @@ export function handleGuildEvent(
     return;
   }
   if (message.t.startsWith("GUILD_ROLE_")) {
-    handleRoleEvent(client, message, subscriber, database);
+    handleRoleEvent(handler, message, subscriber, database);
     return;
   }
   const type = message.t;
   switch (type) {
     case "GUILD_CREATE": {
-      const guild = new Guild(message.d, client);
+      const guild = new Guild(message.d, client, handler);
       database.setGuild(guild.id, guild);
       subscriber.guildCreate.emit({ guild: guild });
       return;
     }
     case "GUILD_DELETE": {
-      const guild = new Guild(message.d, client);
+      const guild = new Guild(message.d, client, handler);
       database.deleteGuild(guild.id);
       subscriber.guildDelete.emit({ guild: guild });
       return;
@@ -75,7 +80,7 @@ export function handleGuildEvent(
       if (guild == null) return;
 
       const emojis = new Array<GuildEmoji>(
-        ...data.emojis.map((emoji) => new GuildEmoji(emoji, guild, client)),
+        ...data.emojis.map((emoji) => new GuildEmoji(emoji, guild, handler)),
       );
       subscriber.guildEmojisUpdate.emit({ guild: guild, emojis: emojis });
       return;

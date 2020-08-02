@@ -1,7 +1,7 @@
 import { User } from "./User.ts";
 import { TextChannelMixIn } from "./TextChannel.ts";
 import { Channel } from "./Channel.ts";
-import { Messages } from "./Delegates.ts";
+import { Messages } from "./Handlers.ts";
 
 /**
  * Class representing a DM channel

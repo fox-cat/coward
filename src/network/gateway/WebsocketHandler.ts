@@ -12,7 +12,7 @@ import { GuildDB, ChannelDB } from "./Event.ts";
 import { Discord, Versions } from "../../util/Constants.ts";
 import { OpCode, Payload } from "./Payload.ts";
 import { newCloseEvent, CloseEventCode } from "./event/Close.ts";
-import { GuildClient } from "../../structures/Guild.ts";
+import { GuildClient, GuildHandler } from "../../structures/Guild.ts";
 import { MessageClient } from "../../structures/Message.ts";
 
 export default class Gateway {
@@ -35,6 +35,7 @@ export default class Gateway {
       readonly intents: Options.clientConstructor["intents"];
       readonly client: GuildClient & MessageClient;
       readonly database: GuildDB & ChannelDB;
+      readonly handler: GuildHandler;
       readonly subscriber: EventSubscriber;
     },
   ) {
@@ -128,6 +129,7 @@ export default class Gateway {
     if (!message.t) return;
     handleEvent(
       this.options.client,
+      this.options.handler,
       message,
       this.options.subscriber,
       this.options.database,

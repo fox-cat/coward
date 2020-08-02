@@ -3,7 +3,7 @@ import { Guild } from "../../../../../structures/Guild.ts";
 import { Role } from "../../../../../structures/Role.ts";
 import { Emitter } from "../../../../../util/Emitter.ts";
 import { GuildDB } from "../../../Event.ts";
-import { Roles } from "../../../../../structures/Delegates.ts";
+import { Roles } from "../../../../../structures/Handlers.ts";
 
 export interface RoleEventSubscriber {
   guildRoleCreate: Emitter<{ guild: Guild; role: Role }>;

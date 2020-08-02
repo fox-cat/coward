@@ -8,7 +8,7 @@ import { GuildVoiceChannel } from "../../../../structures/GuildVoiceChannel.ts";
 import { GuildChannelCategory } from "../../../../structures/GuildChannelCategory.ts";
 import { GuildNewsChannel } from "../../../../structures/GuildNewsChannel.ts";
 import { GuildStoreChannel } from "../../../../structures/GuildStoreChannel.ts";
-import { GuildClient } from "../../../../structures/Guild.ts";
+import { GuildClient, GuildHandler } from "../../../../structures/Guild.ts";
 
 export interface RoleEventSubscriber {
   channelCreate: Emitter<{ channel: Channel }>;
@@ -22,11 +22,12 @@ export function handleChannelEvent(
   subsscriber: RoleEventSubscriber,
   database: ChannelDB,
   client: GuildClient,
+  handler: GuildHandler,
 ) {
   const type = message.t;
   switch (type) {
     case "CHANNEL_CREATE": {
-      const channel = channelFrom(message.d, client);
+      const channel = channelFrom(message.d, client, handler);
       if (channel instanceof DMChannel) {
         database.setDMChannel(channel.id, channel);
         database.setDMChannelUsersRelation(
@@ -38,7 +39,7 @@ export function handleChannelEvent(
       return;
     }
     case "CHANNEL_UPDATE": {
-      const channel = channelFrom(message.d, client);
+      const channel = channelFrom(message.d, client, handler);
       if (channel instanceof DMChannel) {
         database.setDMChannel(channel.id, channel);
       }
@@ -46,7 +47,7 @@ export function handleChannelEvent(
       return;
     }
     case "CHANNEL_DELETE": {
-      const channel = channelFrom(message.d, client);
+      const channel = channelFrom(message.d, client, handler);
       if (channel instanceof DMChannel) {
         database.deleteDMChannel(channel.id);
         database.deleteDMChannelUsersRelations(channel.recipients[0].id);
@@ -56,28 +57,32 @@ export function handleChannelEvent(
     }
     case "CHANNEL_PINS_UPDATE": {
       subsscriber.channelPinsUpdate.emit(
-        { channel: channelFrom(message.d, client) },
+        { channel: channelFrom(message.d, client, handler) },
       );
       return;
     }
   }
 }
 
-function channelFrom(data: any, client: GuildClient): Channel {
+function channelFrom(
+  data: any,
+  client: GuildClient,
+  handler: GuildHandler,
+): Channel {
   switch (data.type) {
     case 0:
-      return new GuildTextChannel(data, client);
+      return new GuildTextChannel(data, client, handler);
     case 1:
-      return new DMChannel(data, client);
+      return new DMChannel(data, handler);
     case 2:
-      return new GuildVoiceChannel(data, client);
+      return new GuildVoiceChannel(data, client, handler);
     case 4:
-      return new GuildChannelCategory(data, client);
+      return new GuildChannelCategory(data, client, handler);
     case 5:
-      return new GuildNewsChannel(data, client);
+      return new GuildNewsChannel(data, client, handler);
     case 6:
-      return new GuildStoreChannel(data, client);
+      return new GuildStoreChannel(data, client, handler);
     default:
-      return new Channel(data, client);
+      return new Channel(data, handler);
   }
 }
