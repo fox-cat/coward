@@ -113,7 +113,7 @@ export class Client implements Messages, Roles {
   }
 
   /** Get a DM channel of a user - if there is none, create one. */
-  async fetchDMChannel(userID: string): Promise<DMChannel> {
+  async getDMChannel(userID: string): Promise<DMChannel> {
     const dmChannelID = this.database.getDMChannelUsersRelation(userID);
     if (dmChannelID != null) {
       const dmChannel = this.database.getDMChannel(dmChannelID);
