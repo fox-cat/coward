@@ -10,7 +10,7 @@ import { Role } from "./structures/Role.ts";
 import { Invite } from "./structures/Invite.ts";
 import { EmbedMessage } from "./structures/EmbedMessage.ts";
 import { Database } from "./util/Database.ts";
-import { Messages, Roles } from "./structures/Handlers.ts";
+import { Messages, Roles, Channels } from "./structures/Handlers.ts";
 
 import * as events from "./Events.ts";
 import { RequestHandler } from "./network/rest/RequestHandler.ts";
@@ -29,7 +29,7 @@ import Gateway from "./network/gateway/WebsocketHandler.ts";
  *
  *            client.connect()
  */
-export class Client implements Messages, Roles {
+export class Client implements Messages, Roles, Channels {
   private requestHandler: RequestHandler;
   private readonly database = new Database();
 
