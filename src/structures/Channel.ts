@@ -15,7 +15,7 @@ export class Channel {
   public id: string;
   public type: number;
 
-  constructor(data: any, public readonly __messages: Messages) {
+  constructor(data: any, protected readonly __messages: Messages) {
     // TODO: Move `__messages` to TextChannelMixIn (but I don't know how to do).
     this.id = data.id;
     this.type = data.type;
