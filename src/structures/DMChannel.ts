@@ -8,7 +8,7 @@ import { Messages } from "./Handlers.ts";
  * @extends Channel
  */
 export class DMChannel extends TextChannelMixIn(Channel) {
-  public recipients: Array<User>;
+  public readonly recipients: Array<User>;
 
   constructor(data: any, client: Messages) {
     super(data, client);

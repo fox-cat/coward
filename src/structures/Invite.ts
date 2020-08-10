@@ -3,10 +3,10 @@ import { Guild, GuildClient, GuildHandler } from "./Guild.ts";
 import { User } from "./User.ts";
 
 export class Invite {
-  public code: string;
-  public guild?: Guild;
-  public channel: Channel;
-  public inviter?: User;
+  public readonly code: string;
+  public readonly guild?: Guild;
+  public readonly channel: Channel;
+  public readonly inviter?: User;
 
   constructor(data: any, client: GuildClient, handler: GuildHandler) {
     this.code = data.code;

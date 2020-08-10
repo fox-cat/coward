@@ -32,19 +32,21 @@ export class RequestHandler {
   public request(
     method: string,
     url: string,
-    data?: string | {
-      file?: {
-        file: File | Blob;
-        name: string;
-      };
-      [key: string]: any;
-    },
+    data?:
+      | string
+      | Readonly<{
+        file?: Readonly<{
+          file: File | Blob;
+          name: string;
+        }>;
+        [key: string]: any;
+      }>,
   ): Promise<unknown> {
-    const headers: { [k: string]: string } = {
+    const headers = {
       "User-Agent": RequestHandler.userAgent,
       "Authorization": "Bot " + this.botToken,
       "X-Ratelimit-Precision": "millisecond",
-    };
+    } as const;
 
     const body = typeof data === "string"
       ? JSON.stringify({ content: data })
@@ -82,7 +84,7 @@ export class RequestHandler {
   private makeBody(
     data: {
       readonly [key: string]: unknown;
-      file?: { file: File | Blob; name: string } | undefined;
+      file?: Readonly<{ file: File | Blob; name: string }> | undefined;
     } | undefined,
     headers: { [k: string]: string },
   ): FormData | string | null {
@@ -105,12 +107,12 @@ export class RequestHandler {
   }
 
   private async requestWithAttempts(
-    { url, init, bucket, attemptLimit = 3 }: {
-      readonly url: string;
-      readonly init?: RequestInit;
-      readonly bucket: Bucket;
-      readonly attemptLimit?: number;
-    },
+    { url, init, bucket, attemptLimit = 3 }: Readonly<{
+      url: string;
+      init?: RequestInit;
+      bucket: Bucket;
+      attemptLimit?: number;
+    }>,
   ): Promise<unknown> {
     for (let attempts = 0; attempts < attemptLimit; ++attempts) {
       const response = await fetch(Discord.API + url, init);

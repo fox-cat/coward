@@ -20,7 +20,7 @@ export class ChannelsRequester implements Channels {
   /** Post a channel in a guild. Requires the `MANAGE_CHANNELS` permission. */
   async createChannel(
     guildID: string,
-    options: CreateChannel,
+    options: Readonly<CreateChannel>,
   ): Promise<Channel> {
     const data = await this.requestHandler.request(
       "POST",
@@ -33,7 +33,7 @@ export class ChannelsRequester implements Channels {
   /** Modify a channel. Requires the `MANAGE_CHANNELS` permission in the guild. */
   async modifyChannel(
     channelID: string,
-    options: ModifyChannel,
+    options: Readonly<ModifyChannel>,
   ): Promise<Channel> {
     const data = await this.requestHandler.request(
       "PATCH",

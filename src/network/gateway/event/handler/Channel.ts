@@ -14,11 +14,11 @@ export interface RoleEventSubscriber {
 
 export function handleChannelEvent(
   message: Payload,
-  { subscriber, client, handler }: {
+  { subscriber, client, handler }: Readonly<{
     subscriber: RoleEventSubscriber;
     client: GuildClient & DMChannels;
     handler: GuildHandler;
-  },
+  }>,
 ) {
   const type = message.t;
   switch (type) {

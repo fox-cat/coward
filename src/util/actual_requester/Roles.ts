@@ -19,7 +19,7 @@ export class RolesRequester implements Roles {
   /** Create a role in a guild. Requires `MANAGE_ROLES` permission. */
   async createRole(
     guildID: string,
-    options: CreateRole,
+    options: Readonly<CreateRole>,
   ): Promise<Role> {
     const data = await this.requestHandler.request(
       "POST",
@@ -40,7 +40,7 @@ export class RolesRequester implements Roles {
   async modifyRole(
     guildID: string,
     roleID: string,
-    options: ModifyRole,
+    options: Readonly<ModifyRole>,
   ): Promise<Role> {
     const data = await this.requestHandler.request(
       "PATCH",

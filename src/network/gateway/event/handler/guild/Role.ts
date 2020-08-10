@@ -13,11 +13,11 @@ export interface RoleEventSubscriber {
 
 export function handleRoleEvent(
   message: Payload,
-  { handler, subscriber, client }: {
+  { handler, subscriber, client }: Readonly<{
     handler: Roles;
     subscriber: RoleEventSubscriber;
     client: Guilds;
-  },
+  }>,
 ) {
   switch (message.t) {
     case "GUILD_ROLE_CREATE": {

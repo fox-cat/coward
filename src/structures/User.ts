@@ -2,12 +2,12 @@ import { UserFlag } from "../util/UserFlags.ts";
 
 /** Class representing a user */
 export class User {
-  public id: string;
-  public username: string;
-  public discriminator: string;
-  public bot: boolean;
-  public public_flags: UserFlag;
-  public flags: UserFlag;
+  public readonly id: string;
+  public readonly username: string;
+  public readonly discriminator: string;
+  public readonly bot: boolean;
+  public readonly public_flags: UserFlag;
+  public readonly flags: UserFlag;
 
   constructor(data: any) {
     this.id = data.id;

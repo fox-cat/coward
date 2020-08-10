@@ -22,7 +22,7 @@ export default class Gateway {
   private sessionID = "";
   private status = "connecting";
 
-  private heart: Heart;
+  private readonly heart: Heart;
 
   get ping(): number {
     return this._ping;

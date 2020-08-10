@@ -32,22 +32,28 @@ export type GuildHandler =
 
 /** Class representing a guild */
 export class Guild {
-  public id: string;
-  public name: string;
-  public ownerID: string;
-  public region: string;
+  public readonly id: string;
+  public readonly name: string;
+  public readonly ownerID: string;
+  public readonly region: string;
 
   /** A map of guild channels. */
-  public channels: Map<string, GuildChannelTypes | any> = new Map<
+  public readonly channels: Map<string, GuildChannelTypes | any> = new Map<
     string,
     GuildChannelTypes | any
   >();
   /** A map of members */
-  public members: Map<string, GuildMember> = new Map<string, GuildMember>();
+  public readonly members: Map<string, GuildMember> = new Map<
+    string,
+    GuildMember
+  >();
   /** A map of emoji */
-  public emojis: Map<string, GuildEmoji> = new Map<string, GuildEmoji>();
+  public readonly emojis: Map<string, GuildEmoji> = new Map<
+    string,
+    GuildEmoji
+  >();
   /** A map of guild roles */
-  public roles: Map<string, Role> = new Map<string, Role>();
+  public readonly roles: Map<string, Role> = new Map<string, Role>();
 
   constructor(data: any, client: GuildClient, handler: GuildHandler) {
     this.id = data.id;

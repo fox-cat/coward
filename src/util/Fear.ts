@@ -5,7 +5,7 @@ export type DebugTypes = "debug" | "info" | "warning" | "error" | "critical";
 // There is ~~probably~~ most definitely a much better way to deal with this.
 // Too bad.
 export function fear(type: DebugTypes, text: string) {
-  var debug = false;
+  const debug = false; // TODO: Use an enviroment variable
   switch (type) {
     case "debug":
       if (debug) {

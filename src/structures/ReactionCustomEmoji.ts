@@ -5,7 +5,7 @@ import { ReactionStandardEmoji } from "./ReactionStandardEmoji.ts";
  * @extends ReactionStandardEmoji
  */
 export class ReactionCustomEmoji extends ReactionStandardEmoji {
-  public animateable: boolean;
+  public readonly animateable: boolean;
 
   constructor(data: any) {
     super(data);

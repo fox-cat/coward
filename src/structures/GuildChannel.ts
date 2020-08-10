@@ -19,12 +19,12 @@ export type GuildChannelHandler = Messages & Channels;
  * @extends Channel
  */
 export class GuildChannel extends Channel {
-  public name: string;
-  public position: number;
-  public nsfw: boolean;
-  public parentID: string; // TODO(fox-cat): channel category object ????
-  public permission_overwrites: Map<string, PermissionOverwrite>;
-  protected _guildID: string | undefined;
+  public readonly name: string;
+  public readonly position: number;
+  public readonly nsfw: boolean;
+  public readonly parentID: string; // TODO(fox-cat): channel category object ????
+  public readonly permission_overwrites: Map<string, PermissionOverwrite>;
+  protected readonly _guildID: string | undefined;
 
   constructor(
     data: any,

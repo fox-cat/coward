@@ -1,16 +1,16 @@
-export const Versions = { GATEWAY: 6, REST: 7, THIS: "v0.3.2" };
-export const Discord = {
+export const Versions = Object.freeze({ GATEWAY: 6, REST: 7, THIS: "v0.3.2" });
+export const Discord = Object.freeze({
   API: "https://discord.com/api/v6",
   CDN: "https://cdn.discordapp.com",
   GATEWAY: "wss://gateway.discord.gg",
-};
+});
 
-export const PremiumTypes = {
+export const PremiumTypes = Object.freeze({
   NITRO_CLASSIC: 1,
   NITRO: 2,
-};
+});
 
-export const Intents = {
+export const Intents = Object.freeze({
   GUILDS: 1 << 0,
   GUILD_MEMBERS: 1 << 1,
   GUILD_BANS: 1 << 2,
@@ -26,9 +26,9 @@ export const Intents = {
   DIRECT_MESSAGES: 1 << 12,
   DIRECT_MESSAGE_REACTIONS: 1 << 13,
   DIRECT_MESSAGE_TYPING: 1 << 14,
-};
+});
 
-export const Endpoints = {
+export const Endpoints = Object.freeze({
   CHANNELS: () => "/channels",
   CHANNEL: (channelID: string) => `/channels/${channelID}`,
   CHANNEL_MESSAGES: (channelID: string) => `/channels/${channelID}/messages`,
@@ -122,4 +122,4 @@ export const Endpoints = {
     `/webhooks/${webhookID}/${webhookToken}/slack`,
   WEBHOOKTOKEN_GITHUB: (webhookID: string, webhookToken: string) =>
     `/webhooks/${webhookID}/${webhookToken}/github`,
-};
+});

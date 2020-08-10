@@ -1,7 +1,7 @@
 /** Class representing a standard reaction emoji */
 export class ReactionStandardEmoji {
-  public id: string;
-  public name: string;
+  public readonly id: string;
+  public readonly name: string;
 
   constructor(data: any) {
     this.id = data.id;

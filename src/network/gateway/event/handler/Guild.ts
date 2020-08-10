@@ -28,11 +28,11 @@ export interface GuildEventSubscriber
 
 export function handleGuildEvent(
   message: Payload,
-  delegates: {
+  delegates: Readonly<{
     client: GuildClient;
     handler: GuildHandler;
     subscriber: GuildEventSubscriber;
-  },
+  }>,
 ) {
   if (message.t.startsWith("GUILD_MEMBER_")) {
     handleMemberEvent(message, delegates);

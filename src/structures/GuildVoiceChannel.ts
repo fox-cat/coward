@@ -9,8 +9,8 @@ import {
  * @extends GuildChannel
  */
 export class GuildVoiceChannel extends GuildChannel {
-  public bitrate: number;
-  public userLimit: number;
+  public readonly bitrate: number;
+  public readonly userLimit: number;
 
   constructor(
     data: any,

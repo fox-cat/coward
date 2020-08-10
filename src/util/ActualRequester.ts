@@ -74,7 +74,7 @@ export class ActualRequester implements Requester {
   }
 
   modifyPresence(
-    options: ModifyPresence = { status: "online" },
+    options: Readonly<ModifyPresence> = { status: "online" },
   ): Promise<void> {
     return this.gateway.modifyPresence(options);
   }
@@ -173,7 +173,7 @@ export class ActualRequester implements Requester {
 
   async createChannelInvite(
     channelID: string,
-    inviteOptions?: { max_age?: number; max_uses?: number },
+    inviteOptions?: Readonly<Partial<{ max_age: number; max_uses: number }>>,
   ): Promise<Invite> {
     const data = await this.requestHandler.request(
       "POST",
@@ -245,7 +245,7 @@ export class ActualRequester implements Requester {
   /** Modify a guild. Requires the `MANAGE_GUILD` permission. */
   async modifyGuild(
     guildID: string,
-    options: ModifyGuild,
+    options: Readonly<ModifyGuild>,
   ): Promise<Guild> {
     const data = await this.requestHandler.request(
       "PATCH",
@@ -268,7 +268,7 @@ export class ActualRequester implements Requester {
   async modifyMember(
     guildID: string,
     userID: string,
-    options: ModifyMember,
+    options: Readonly<ModifyMember>,
   ): Promise<GuildMember> {
     const data = await this.requestHandler.request(
       "PATCH",
@@ -332,7 +332,7 @@ export class ActualRequester implements Requester {
     guildID: string,
     /** User to ban */
     userID: string,
-    options: PutBan,
+    options: Readonly<PutBan>,
   ): Promise<void> {
     await this.requestHandler.request(
       "PUT",

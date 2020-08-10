@@ -36,7 +36,7 @@ export function newCloseEvent(
 }
 
 class ReconnectEvent implements CloseEvent {
-  constructor(private reconnectHandler: () => Promise<void>) {}
+  constructor(private readonly reconnectHandler: () => Promise<void>) {}
 
   handle(): Promise<void> {
     return this.reconnectHandler();

@@ -3,7 +3,7 @@ export interface Listener<T> {
 }
 
 export class Emitter<T> {
-  private listeners: Listener<T>[] = [];
+  private readonly listeners: Listener<T>[] = [];
 
   on = (listener: Listener<T>) => {
     this.listeners.push(listener);

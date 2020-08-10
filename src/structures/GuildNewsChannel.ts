@@ -10,8 +10,8 @@ import { TextChannelMixIn } from "./TextChannel.ts";
  * @extends GuildChannel
  */
 export class GuildNewsChannel extends TextChannelMixIn(GuildChannel) {
-  public topic: string;
-  public lastMessageID: string; // TODO(fox-cat): contemplate message object here?
+  public readonly topic: string;
+  public readonly lastMessageID: string; // TODO(fox-cat): contemplate message object here?
 
   constructor(
     data: any,

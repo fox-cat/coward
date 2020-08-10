@@ -15,10 +15,10 @@ export interface MemberEventSubscriber {
 
 export function handleMemberEvent(
   message: Payload,
-  { subscriber, client }: {
+  { subscriber, client }: Readonly<{
     subscriber: MemberEventSubscriber;
     client: Guilds;
-  },
+  }>,
 ) {
   switch (message.t) {
     case "GUILD_MEMBER_ADD": {

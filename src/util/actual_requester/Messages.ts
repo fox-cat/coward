@@ -15,7 +15,7 @@ export class MessagesRequester implements Messages {
   /** Post a message in a channel. Requires the `SEND_MESSAGES` permission.*/
   async createMessage(
     channelID: string,
-    content: string | CreateMessage,
+    content: string | Readonly<CreateMessage>,
   ): Promise<Message> {
     if (typeof content === "string") content = { content: content };
     const data = await this.requestHandler.request(
@@ -32,7 +32,7 @@ export class MessagesRequester implements Messages {
     channelID: string,
     /** Message to modify */
     messageID: string,
-    content: string | ModifyMessage,
+    content: string | Readonly<ModifyMessage>,
   ): Promise<Message> {
     if (typeof content === "string") content = { content: content };
     const data = await this.requestHandler.request(

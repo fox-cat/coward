@@ -1,10 +1,10 @@
 export class PermissionOverwrite {
-  public type: string;
-  public id: string;
-  public deny_new: string;
-  public deny: number;
-  public allow_new: string;
-  public allow: number;
+  public readonly type: string;
+  public readonly id: string;
+  public readonly deny_new: string;
+  public readonly deny: number;
+  public readonly allow_new: string;
+  public readonly allow: number;
 
   constructor(data: any) {
     //this = {this, ...data};

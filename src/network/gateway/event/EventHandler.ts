@@ -16,11 +16,11 @@ export interface EventSubscriber
 
 export function handleEvent(
   message: Payload,
-  delegates: {
+  delegates: Readonly<{
     client: GuildClient & MessageClient;
     handler: GuildHandler;
     subscriber: EventSubscriber;
-  },
+  }>,
 ) {
   const type = message.t;
   if (!type) return;

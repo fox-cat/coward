@@ -15,10 +15,10 @@ export interface MessageEventSubscriber {
 
 export function handleMessageEvent(
   message: Payload,
-  { client, subscriber }: {
+  { client, subscriber }: Readonly<{
     client: MessageClient;
     subscriber: MessageEventSubscriber;
-  },
+  }>,
 ) {
   const type = message.t;
   switch (type) {

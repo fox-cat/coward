@@ -19,7 +19,7 @@ export class Client {
   private readonly requester: Requester;
   private connectionTask: Promise<void> | null = null;
 
-  public events = events;
+  public readonly events = events;
 
   /** Create a Client */
   public constructor(
