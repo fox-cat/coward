@@ -203,17 +203,6 @@ export class ActualRequester implements Requester {
     );
   }
 
-  /**
-	 * Post a typing indicator for a specified channel.
-	 * Bots should usually not use this, however if a bot is responding to a command and expects the computation to take a few seconds, this may be used to let the user know that the bot is processing their message.
-	 */
-  async postTypingIndicator(channelID: string): Promise<void> {
-    await this.requestHandler.request(
-      "POST",
-      Endpoints.CHANNEL_TYPING(channelID),
-    );
-  }
-
   /** Pin a message in a channel. Requires the `MANAGE_MESSAGES` permission. */
   async putPin(
     /** Channel to pin the message in */
