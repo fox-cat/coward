@@ -46,21 +46,21 @@ export function handleGuildEvent(
   const { cache, handler, subscriber } = delegates;
   const type = message.t;
   switch (type) {
-    case "GUILD_CREATE": {
-      const guild = new Guild(message.d, cache, handler);
-      subscriber.guildCreate.emit({ guild: guild });
+    case "GUILD_CREATE":
+      subscriber.guildCreate.emit(
+        { guild: new Guild(message.d, cache, handler) },
+      );
       return;
-    }
-    case "GUILD_UPDATE": {
-      const guild = new Guild(message.d, cache, handler);
-      subscriber.guildUpdate.emit({ guild });
+    case "GUILD_UPDATE":
+      subscriber.guildUpdate.emit(
+        { guild: new Guild(message.d, cache, handler) },
+      );
       return;
-    }
-    case "GUILD_DELETE": {
-      const guild = new Guild(message.d, cache, handler);
-      subscriber.guildDelete.emit({ guild: guild });
+    case "GUILD_DELETE":
+      subscriber.guildDelete.emit(
+        { guild: new Guild(message.d, cache, handler) },
+      );
       return;
-    }
     case "GUILD_BAN_ADD": {
       const data = message.d as { guild_id: string; user: User };
       const guild = cache.getGuild(data.guild_id);
