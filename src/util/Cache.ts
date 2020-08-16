@@ -2,13 +2,12 @@ import type { GuildCache, Guild } from "../structures/Guild.ts";
 import { DMChannel } from "../structures/DMChannel.ts";
 import type { MessageCache } from "../structures/Message.ts";
 import type {
+  EventsListeners,
   Events,
   EventsKey,
-  EventsListeners,
+  EventsListener,
   EventsValue,
-  EventsPayload,
-  Listener,
-} from "./Emitter.ts";
+} from "../Events.ts";
 
 export class Cache implements GuildCache, MessageCache {
   private readonly guilds: Map<string, Guild> = new Map<string, Guild>();
@@ -25,7 +24,7 @@ export class Cache implements GuildCache, MessageCache {
     string
   >();
 
-  private readonly subscribers: EventsListeners = {
+  private readonly subscribers: Partial<EventsListeners> = {
     channelCreate: ({ channel }) => {
       if (channel instanceof DMChannel) {
         this.setDMChannel(channel.id, channel);
@@ -78,18 +77,18 @@ export class Cache implements GuildCache, MessageCache {
   };
 
   constructor(publishers: Events) {
-    type EventsEntry = [
-      EventsValue<EventsKey>,
-      Listener<EventsPayload<EventsKey>>,
-    ];
-    for (
-      const [publisher, subscriber] of (Object.keys(publishers) as EventsKey[])
-        .map((key) => [publishers[key], this.subscribers[key]])
-        .filter((entry): entry is EventsEntry =>
-          entry[0] != null && entry[1] != null
-        )
-    ) {
-      publisher.on(subscriber);
+    const keys = (Object.keys(this.subscribers) as readonly EventsKey[]);
+    type Entry = {
+      publisher: EventsValue<EventsKey>;
+      subscriber: EventsListener<EventsKey>;
+    };
+    const entries: Entry[] = keys.map((key) => ({
+      publisher: publishers[key],
+      subscriber: this.subscribers[key]!, // always defined
+    }));
+    for (const entry of Object.values(entries)) {
+      // This is always safe but not type-safe.
+      entry.publisher.on(entry.subscriber as any);
     }
   }
 
