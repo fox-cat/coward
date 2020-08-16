@@ -52,8 +52,7 @@ export function handleGuildEvent(
       return;
     }
     case "GUILD_UPDATE": {
-      const guild = new Guild(message.d, client, handler);
-      client.setGuild(guild.id, guild);
+      const guild = new Guild(message.d, cache, handler);
       subscriber.guildUpdate.emit({ guild });
       return;
     }

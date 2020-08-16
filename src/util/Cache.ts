@@ -47,6 +47,9 @@ export class Cache implements GuildCache, MessageCache {
     guildCreate: ({ guild }) => {
       this.setGuild(guild.id, guild);
     },
+    guildUpdate: ({ guild }) => {
+      this.setGuild(guild.id, guild);
+    },
     guildDelete: ({ guild }) => {
       this.deleteGuild(guild.id);
     },
