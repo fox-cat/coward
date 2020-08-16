@@ -23,7 +23,7 @@ export interface Listener<T> {
   (event: T): any;
 }
 
-export class Emitter<T> {
+export class Emitter<T extends object = {}> {
   private readonly listeners: Listener<T>[] = [];
 
   on = (listener: Listener<T>) => {
