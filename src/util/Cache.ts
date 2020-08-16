@@ -4,8 +4,8 @@ import type { MessageCache } from "../structures/Message.ts";
 import type {
   Events,
   EventsKey,
-  EventsListener,
   EventsListeners,
+  EventsEntry,
 } from "./Emitter.ts";
 
 export class Cache implements GuildCache, MessageCache {
@@ -76,14 +76,13 @@ export class Cache implements GuildCache, MessageCache {
   };
 
   constructor(publishers: Events) {
-    const entries = (Object.keys(publishers) as EventsKey[])
-      .map((key) => [key, this.subscribers[key]])
-      .filter((entry): entry is [EventsKey, EventsListener] =>
-        entry[1] != null
-      );
-
-    for (const [key, subscriber] of entries) {
-      const publisher = publishers[key];
+    for (
+      const [publisher, subscriber] of (Object.keys(publishers) as EventsKey[])
+        .map((key) => [publishers[key], this.subscribers[key]])
+        .filter((entry): entry is EventsEntry =>
+          entry[0] != null && entry[1] != null
+        )
+    ) {
       publisher.on(subscriber);
     }
   }
