@@ -1,5 +1,5 @@
 export { Client } from "./src/Client.ts";
-export * as Events from "./src/Events.ts";
+export { Events } from "./src/Events.ts";
 
 export * from "./src/structures/Options.ts";
 export { Channel } from "./src/structures/Channel.ts";

@@ -13,7 +13,7 @@ import type {
   PutBan,
 } from "../structures/Options.ts";
 
-import type { Events } from "./Emitter.ts";
+import { Events } from "../Events.ts";
 import { RequestHandler } from "../network/rest/RequestHandler.ts";
 import Gateway from "../network/gateway/WebsocketHandler.ts";
 
