@@ -5,6 +5,7 @@ import {
   Guild,
   GuildCache,
   GuildHandler,
+  UnavailableGuild,
 } from "../../../../structures/Guild.ts";
 import type { User } from "../../../../structures/User.ts";
 import type { Emitter } from "../../../../util/Emitter.ts";
@@ -14,7 +15,7 @@ export interface GuildEventSubscriber
   extends RoleEventSubscriber, MemberEventSubscriber {
   guildCreate: Emitter<{ guild: Guild }>;
   guildUpdate: Emitter<{ guild: Guild }>;
-  guildDelete: Emitter<{ guild: Guild }>;
+  guildDelete: Emitter<{ guild: UnavailableGuild }>;
   guildBanAdd: Emitter<{ guild: Guild; user: User }>;
   guildBanRemove: Emitter<
     { guild: Guild; user: User }
@@ -58,7 +59,7 @@ export function handleGuildEvent(
       return;
     case "GUILD_DELETE":
       subscriber.guildDelete.emit(
-        { guild: new Guild(message.d, cache, handler) },
+        { guild: new UnavailableGuild(message.d) },
       );
       return;
     case "GUILD_BAN_ADD": {

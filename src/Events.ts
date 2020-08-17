@@ -1,7 +1,7 @@
 import { Emitter, Listener } from "./util/Emitter.ts";
 
 import type { Channel } from "./structures/Channel.ts";
-import type { Guild } from "./structures/Guild.ts";
+import type { Guild, UnavailableGuild } from "./structures/Guild.ts";
 import type { GuildMember } from "./structures/GuildMember.ts";
 import type { GuildEmoji } from "./structures/GuildEmoji.ts";
 import type { ReactionCustomEmoji } from "./structures/ReactionCustomEmoji.ts";
@@ -55,7 +55,7 @@ export class Events {
    * - The client leaves or is removed from a guild.
    * - A guild becomes unavailable.
    */
-  readonly guildDelete = new Emitter<{ guild: Guild }>();
+  readonly guildDelete = new Emitter<{ guild: UnavailableGuild }>();
 
   /** Fired when a user is banned from a guild. */
   readonly guildBanAdd = new Emitter<{ guild: Guild; user: User }>();

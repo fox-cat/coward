@@ -79,3 +79,16 @@ export class Guild {
     }
   }
 }
+
+export class UnavailableGuild {
+  readonly id: string;
+  readonly removedYouFromGuild: boolean;
+
+  constructor(data: any) {
+    if (data.unavailable === false) {
+      throw new Error(`the available guild: ${data}`);
+    }
+    this.id = data.id;
+    this.removedYouFromGuild = !("unavailable" in data);
+  }
+}
