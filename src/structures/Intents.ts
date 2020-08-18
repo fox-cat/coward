@@ -1,6 +1,6 @@
 import type { EventsKey, Events } from "../Events.ts";
 import { BitField } from "../util/BitField.ts";
-
+import { acceptWebSocket } from "https://deno.land/std@0.61.0/ws/mod.ts";
 /** 
  * A bit field expressing conditionally subscription on Discord API.
  * https://discord.com/developers/docs/topics/gateway#gateway-intents
@@ -115,10 +115,10 @@ export class Intents extends BitField {
   }
 }
 
-type EventKeyByIntentsKey<K extends IntentsKey> =
+export type EventKeyByIntentsKey<K extends IntentsKey> =
   typeof EventKeysByIntents[K][number];
 
-type EventsByIntents<K extends IntentsKey> = Pick<
+export type EventsByIntents<K extends IntentsKey> = Pick<
   Events,
   EventKeyByIntentsKey<K>
 >;
@@ -138,6 +138,9 @@ function eventsByIntent<K extends IntentsKey>(
 export function eventsByIntents<K extends IntentsKey>(
   events: Events,
   ...keys: K[]
-): EventsByIntents<K>[] {
-  return keys.map((key) => eventsByIntent(events, key));
+): EventsByIntents<K> {
+  return keys.reduce((acc, key) => ({
+    ...acc,
+    [key]: eventsByIntent(events, key),
+  }), {} as EventsByIntents<K>);
 }
