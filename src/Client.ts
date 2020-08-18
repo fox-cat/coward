@@ -1,6 +1,7 @@
 import { Events } from "./Events.ts";
 import type { Requester } from "./util/Requester.ts";
 import { ActualRequester } from "./util/ActualRequester.ts";
+import { Intents } from "./structures/Intents.ts";
 
 /**
  * Class representing the main client
@@ -24,17 +25,13 @@ export class Client {
   /** Create a Client */
   public constructor(
     public token: string,
-    public options: { intents?: number[] | number } = {},
+    public options: { intents?: Intents } = {},
   ) {
-    if (this.options.intents !== undefined) {
-      this.options.intents = (Array.isArray(this.options.intents))
-        ? this.options.intents.reduce((prev, intent) => prev | intent, 0)
-        : this.options.intents;
-    }
-
-    this.requester = new ActualRequester(
-      { token, subscriber: this.events, intents: this.options.intents },
-    );
+    this.requester = new ActualRequester({
+      token,
+      subscriber: this.events,
+      intents: this.options.intents?.bitfield,
+    });
   }
 
   /** Connect to the Discord API */

@@ -1,10 +1,11 @@
 import type { EventsKey, Events } from "../Events.ts";
+import { BitField } from "../util/BitField.ts";
 
 /** 
  * A bit field expressing conditionally subscription on Discord API.
  * https://discord.com/developers/docs/topics/gateway#gateway-intents
  */
-export const Intents = {
+export const intents = {
   GUILDS: 1 << 0,
   GUILD_MEMBERS: 1 << 1,
   GUILD_BANS: 1 << 2,
@@ -22,10 +23,12 @@ export const Intents = {
   DIRECT_MESSAGE_TYPING: 1 << 14,
 } as const;
 
+export type IntentsKey = keyof typeof intents;
+
 // These commented out keys are not implemented now.
 /** Store `EventsKey`s by the keys of `Intents`. */
 export const EventKeysByIntents: Readonly<
-  Record<keyof typeof Intents, Readonly<EventsKey[]>>
+  Record<IntentsKey, Readonly<EventsKey[]>>
 > = {
   GUILDS: [
     "guildCreate",
@@ -100,9 +103,21 @@ export const EventKeysByIntents: Readonly<
   ],
 };
 
+export type IntentsResolvable =
+  | IntentsKey
+  | number
+  | BitField
+  | IntentsResolvable[];
+
+export class Intents extends BitField {
+  constructor(messageFlags: IntentsResolvable) {
+    super(messageFlags, new Map(Object.entries(intents)));
+  }
+}
+
 function eventsByIntent(
   events: Events,
-  key: keyof typeof Intents,
+  key: IntentsKey,
 ): Partial<Events> {
   const eventKeys = EventKeysByIntents[key];
   return eventKeys.reduce((acc, key) => ({
@@ -114,7 +129,7 @@ function eventsByIntent(
 /** Extract events from `events` by `keys` of Intents */
 export function eventsByIntents(
   events: Events,
-  ...keys: (keyof typeof Intents)[]
+  ...keys: IntentsKey[]
 ): Partial<Events>[] {
   return keys.map((key) => eventsByIntent(events, key));
 }
